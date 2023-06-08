@@ -3,7 +3,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using MetadataExtractor;
+using Hjg.Pngcs;
+using Hjg.Pngcs.Chunks;
 using Directory = System.IO.Directory;
 
 namespace TavernAICardLib;
@@ -87,35 +88,29 @@ public abstract class CardSaver
     public abstract void Save(string filePath, TavernAiCard card);
 }
 
+// Loaders
+
 public class ImageCardLoader : CardLoader
 {
     public override TavernAiCard Load(string filePath)
     {
+        PngReader reader = FileHelper.CreatePngReader(filePath);
+        string data = reader.GetMetadata().GetTxtForKey("chara");
+        reader.End();
+        
         Image? image = null;
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
             image = new Bitmap(filePath);
-        }
-        var directories = ImageMetadataReader.ReadMetadata(filePath);
-        foreach (var dir in directories)
+
+        string jsonData = Encoding.ASCII.GetString(Convert.FromBase64String(data));
+        TavernAiCard? card = JsonSerializer.Deserialize<TavernAiCard>(jsonData, new JsonSerializerOptions()
         {
-            foreach (var tag in dir.Tags)
-            {
-                string[]? splitDesc = tag.Description?.Split(": ");
-                if (splitDesc != null && splitDesc[0] == "chara")
-                {
-                    string jsonData = Encoding.ASCII.GetString(Convert.FromBase64String(splitDesc[1]));
-                    TavernAiCard? card = JsonSerializer.Deserialize<TavernAiCard>(jsonData, new JsonSerializerOptions()
-                    {
-                        IncludeFields = true
-                    });
-                    if (card != null)
-                    {
-                        card.Image = image;
-                        return card;
-                    }
-                }
-            }
+            IncludeFields = true
+        });
+        if (card != null)
+        {
+            card.Image = image;
+            return card;
         }
 
         throw new NoMetaDataException(filePath);
@@ -140,6 +135,8 @@ public class JsonCardLoader : CardLoader
     }
 }
 
+// Savers
+
 public class JsonCardSaver : CardSaver
 {
     public override void Save(string filePath, TavernAiCard card)
@@ -159,9 +156,42 @@ public class ImageCardSaver : CardSaver
     public override void Save(string filePath, TavernAiCard card)
     {
         if (card.Image == null) throw new NoImageException(filePath);
-        throw new NotImplementedException();
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            throw new OsFileSaveException(filePath);
+        card.Image.Save(filePath);
+        
+        // https://stackoverflow.com/a/32175522/
+        String tmpFile = "tmp.png";
+        PngReader reader = FileHelper.CreatePngReader(filePath);
+        PngWriter writer = FileHelper.CreatePngWriter(tmpFile, reader.ImgInfo, true);
+        int chunkBehav = ChunkCopyBehaviour.COPY_ALL_SAFE;
+        writer.CopyChunksFirst(reader, chunkBehav);
+        PngChunk chara = writer.GetMetadata().SetText("chara", 
+            Convert.ToBase64String(
+                Encoding.ASCII.GetBytes(
+                        JsonSerializer.Serialize(card)
+                    )
+                )
+            );
+        chara.Priority = true;
+
+        int channels = reader.ImgInfo.Channels;
+        if (channels < 3)
+            throw new Exception("Image saving only works with RGB/RGBA images");
+        for (int row = 0; row < reader.ImgInfo.Rows; row++)
+        {
+            ImageLine l1 = reader.ReadRowInt(row); // format: RGBRGB... or RGBARGBA...
+            writer.WriteRow(l1, row);
+        }
+        writer.CopyChunksLast(reader, chunkBehav);
+        writer.End();
+        reader.End();
+        File.Delete(filePath);
+        File.Move(tmpFile, filePath);
     }
 }
+
+// Exceptions
 
 public class NoImageException : Exception
 {
@@ -178,6 +208,16 @@ public class NoMetaDataException : Exception
     public NoMetaDataException(string fileName)
     {
         Message = $"Failed to load {fileName}, No metadata.";
+    }
+
+    public override string Message { get; }
+}
+
+public class OsFileSaveException : Exception
+{
+    public OsFileSaveException(string fileName)
+    {
+        Message = $"Failed to save {fileName}, Saving to image formats is only supported on Windows.";
     }
 
     public override string Message { get; }

@@ -20,5 +20,4 @@ A:\RiderProjects\TavernAICardLib\TavernAICardLibTest\obj\Debug\net6.0\TavernAICa
 A:\RiderProjects\TavernAICardLib\TavernAICardLibTest\obj\Debug\net6.0\ref\TavernAICardLibTest.dll
 A:\RiderProjects\TavernAICardLib\TavernAICardLibTest\obj\Debug\net6.0\TavernAICardLibTest.pdb
 A:\RiderProjects\TavernAICardLib\TavernAICardLibTest\obj\Debug\net6.0\TavernAICardLibTest.genruntimeconfig.cache
-A:\RiderProjects\TavernAICardLib\TavernAICardLibTest\bin\Debug\net6.0\MetadataExtractor.dll
-A:\RiderProjects\TavernAICardLib\TavernAICardLibTest\bin\Debug\net6.0\XmpCore.dll
+A:\RiderProjects\TavernAICardLib\TavernAICardLibTest\bin\Debug\net6.0\Hjg.Pngcs.dll

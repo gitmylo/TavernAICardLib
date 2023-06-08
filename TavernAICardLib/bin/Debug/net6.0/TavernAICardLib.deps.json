@@ -8,26 +8,21 @@
     ".NETCoreApp,Version=v6.0": {
       "TavernAICardLib/1.0.0": {
         "dependencies": {
-          "MetadataExtractor": "2.8.0",
+          "Hjg.Pngcs": "1.1.4",
           "System.Drawing.Common": "7.0.0"
         },
         "runtime": {
           "TavernAICardLib.dll": {}
         }
       },
-      "MetadataExtractor/2.8.0": {
-        "dependencies": {
-          "System.Text.Encoding.CodePages": "4.5.1",
-          "XmpCore": "6.1.10.1"
-        },
+      "Hjg.Pngcs/1.1.4": {
         "runtime": {
-          "lib/netstandard2.0/MetadataExtractor.dll": {
-            "assemblyVersion": "2.8.0.0",
-            "fileVersion": "2.8.0.0"
+          "lib/net6.0/Hjg.Pngcs.dll": {
+            "assemblyVersion": "1.1.4.0",
+            "fileVersion": "1.1.4.0"
           }
         }
       },
-      "Microsoft.NETCore.Platforms/2.1.2": {},
       "Microsoft.Win32.SystemEvents/7.0.0": {
         "runtime": {
           "lib/net6.0/Microsoft.Win32.SystemEvents.dll": {
@@ -62,21 +57,6 @@
             "fileVersion": "7.0.22.51805"
           }
         }
-      },
-      "System.Runtime.CompilerServices.Unsafe/4.5.2": {},
-      "System.Text.Encoding.CodePages/4.5.1": {
-        "dependencies": {
-          "Microsoft.NETCore.Platforms": "2.1.2",
-          "System.Runtime.CompilerServices.Unsafe": "4.5.2"
-        }
-      },
-      "XmpCore/6.1.10.1": {
-        "runtime": {
-          "lib/netstandard2.0/XmpCore.dll": {
-            "assemblyVersion": "6.1.10.1",
-            "fileVersion": "6.1.10.1"
-          }
-        }
       }
     }
   },
@@ -86,19 +66,12 @@
       "serviceable": false,
       "sha512": ""
     },
-    "MetadataExtractor/2.8.0": {
+    "Hjg.Pngcs/1.1.4": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-p4sa1yRUZNU2S4febP3ewmM524QDZ7qSM+PamR7vKLThlEDM1Wz4VBxO48Nk31uakUVUQ7az0ULkOyt31i+q0Q==",
-      "path": "metadataextractor/2.8.0",
-      "hashPath": "metadataextractor.2.8.0.nupkg.sha512"
-    },
-    "Microsoft.NETCore.Platforms/2.1.2": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-mOJy3M0UN+LUG21dLGMxaWZEP6xYpQEpLuvuEQBaownaX4YuhH6NmNUlN9si+vNkAS6dwJ//N1O4DmLf2CikVg==",
-      "path": "microsoft.netcore.platforms/2.1.2",
-      "hashPath": "microsoft.netcore.platforms.2.1.2.nupkg.sha512"
+      "sha512": "sha512-uk7W9QPzgUIsCVHSCxKcr2ptzCMPXgCzfrlKMlGd7hICVBorvhyGdeThAO73yITpueIhHOolhGgHS3BwgZuo5Q==",
+      "path": "hjg.pngcs/1.1.4",
+      "hashPath": "hjg.pngcs.1.1.4.nupkg.sha512"
     },
     "Microsoft.Win32.SystemEvents/7.0.0": {
       "type": "package",
@@ -113,27 +86,6 @@
       "sha512": "sha512-KIX+oBU38pxkKPxvLcLfIkOV5Ien8ReN78wro7OF5/erwcmortzeFx+iBswlh2Vz6gVne0khocQudGwaO1Ey6A==",
       "path": "system.drawing.common/7.0.0",
       "hashPath": "system.drawing.common.7.0.0.nupkg.sha512"
-    },
-    "System.Runtime.CompilerServices.Unsafe/4.5.2": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-wprSFgext8cwqymChhrBLu62LMg/1u92bU+VOwyfBimSPVFXtsNqEWC92Pf9ofzJFlk4IHmJA75EDJn1b2goAQ==",
-      "path": "system.runtime.compilerservices.unsafe/4.5.2",
-      "hashPath": "system.runtime.compilerservices.unsafe.4.5.2.nupkg.sha512"
-    },
-    "System.Text.Encoding.CodePages/4.5.1": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-4J2JQXbftjPMppIHJ7IC+VXQ9XfEagN92vZZNoG12i+zReYlim5dMoXFC1Zzg7tsnKDM7JPo5bYfFK4Jheq44w==",
-      "path": "system.text.encoding.codepages/4.5.1",
-      "hashPath": "system.text.encoding.codepages.4.5.1.nupkg.sha512"
-    },
-    "XmpCore/6.1.10.1": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-/Tp2/e39e7z8hLtS4TXt0FNNZHbf5yNFfHS0/59soXlgOzZlyRZivvzWpvujyaWkTWWgecp/1nHxkuc5vntn7A==",
-      "path": "xmpcore/6.1.10.1",
-      "hashPath": "xmpcore.6.1.10.1.nupkg.sha512"
     }
   }
 }
