@@ -1,5 +1,5 @@
 ﻿using System.Drawing;
-using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -9,7 +9,7 @@ namespace TavernAICardLib;
 
 public class TavernAiCard
 {
-    public Image image;
+    public Image? Image;
     
     
     // Card Fields:
@@ -29,22 +29,24 @@ public class TavernAiCard
     [JsonInclude] [JsonPropertyName("system_prompt")] public string? SystemPrompt { get; set; }
     [JsonInclude] [JsonPropertyName("tags")] public List<string>? Tags { get; set; }
 
-    public TavernAiCard(Image image)
+    public TavernAiCard(Image? image)
     {
-        this.image = image;
+        this.Image = image;
     }
+
+    public static string[] FileTypes = {".png", ".webp", ".jpg", ".jpeg"};
     
-    private static Dictionary<string[], CardLoader> FilePathEndsWith = new Dictionary<string[], CardLoader>()
+    private static Dictionary<string[], CardLoader> _filePathEndsWith = new()
     {
-        {new []{".png", ".webp", ".jpg", ".jpeg"}, new ImageCardLoader()},
+        {FileTypes, new ImageCardLoader()},
     };
 
     public static TavernAiCard? Load(string filePath)
     {
-        foreach (var key in FilePathEndsWith.Keys)
+        foreach (var key in _filePathEndsWith.Keys)
             foreach (var end in key)
                 if (filePath.ToLower().EndsWith(end))
-                    return FilePathEndsWith[key].Load(filePath);
+                    return _filePathEndsWith[key].Load(filePath);
 
         return null;
     }
@@ -64,7 +66,11 @@ public class ImageCardLoader : CardLoader
 {
     public override TavernAiCard Load(string filePath)
     {
-        Image image = new Bitmap(filePath);
+        Image? image = null;
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            image = new Bitmap(filePath);
+        }
         var directories = ImageMetadataReader.ReadMetadata(filePath);
         foreach (var dir in directories)
         {
@@ -80,7 +86,7 @@ public class ImageCardLoader : CardLoader
                     });
                     if (card != null)
                     {
-                        card.image = image;
+                        card.Image = image;
                         return card;
                     }
                 }
