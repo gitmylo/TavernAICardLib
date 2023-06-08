@@ -39,8 +39,16 @@ public class TavernAiCard
     public TavernAiCard(string? imagePath, Image? image)
     {
         this.ImagePath = imagePath;
-        this.Image = image;
+        if (image == null && imagePath != null && ImageFullySupported())
+        {
+            this.Image = new Bitmap(imagePath);
+        }
+        else this.Image = image;
     }
+
+    public TavernAiCard() {}
+    public TavernAiCard(string? imagePath) : this(imagePath, null) {}
+    public TavernAiCard(Image? image) : this(null, image) {}
 
     public static string[] ImageFileTypes = {".png", ".webp", ".jpg", ".jpeg"};
     public static string[] JsonFileTypes = {".json"};
