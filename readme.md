@@ -38,12 +38,12 @@ TavernAiCard card = TavernAiCard.Load("character.png");
 ```
 
 ## Saving
-* Saving a .json
+* Saving a `.json`
 ```csharp
 card.Save("character_saved.json");
 ```
 
-* Saving a .png
+* Saving a `.png`
 ```csharp
 card.Save("character_saved.png");
 ```
