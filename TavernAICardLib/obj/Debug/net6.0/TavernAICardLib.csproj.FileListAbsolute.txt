@@ -1,0 +1,12 @@
+A:\RiderProjects\TavernAICardLib\TavernAICardLib\bin\Debug\net6.0\TavernAICardLib.deps.json
+A:\RiderProjects\TavernAICardLib\TavernAICardLib\bin\Debug\net6.0\TavernAICardLib.dll
+A:\RiderProjects\TavernAICardLib\TavernAICardLib\bin\Debug\net6.0\ref\TavernAICardLib.dll
+A:\RiderProjects\TavernAICardLib\TavernAICardLib\bin\Debug\net6.0\TavernAICardLib.pdb
+A:\RiderProjects\TavernAICardLib\TavernAICardLib\obj\Debug\net6.0\TavernAICardLib.csproj.AssemblyReference.cache
+A:\RiderProjects\TavernAICardLib\TavernAICardLib\obj\Debug\net6.0\TavernAICardLib.GeneratedMSBuildEditorConfig.editorconfig
+A:\RiderProjects\TavernAICardLib\TavernAICardLib\obj\Debug\net6.0\TavernAICardLib.AssemblyInfoInputs.cache
+A:\RiderProjects\TavernAICardLib\TavernAICardLib\obj\Debug\net6.0\TavernAICardLib.AssemblyInfo.cs
+A:\RiderProjects\TavernAICardLib\TavernAICardLib\obj\Debug\net6.0\TavernAICardLib.csproj.CoreCompileInputs.cache
+A:\RiderProjects\TavernAICardLib\TavernAICardLib\obj\Debug\net6.0\TavernAICardLib.dll
+A:\RiderProjects\TavernAICardLib\TavernAICardLib\obj\Debug\net6.0\ref\TavernAICardLib.dll
+A:\RiderProjects\TavernAICardLib\TavernAICardLib\obj\Debug\net6.0\TavernAICardLib.pdb
