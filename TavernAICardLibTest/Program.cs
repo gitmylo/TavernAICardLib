@@ -5,7 +5,7 @@ using TavernAICardLib;
 TavernAiCard card = TavernAiCard.Load("character.json");
 
 // Example: Load the character from a png card.
-// TavernAiCard? card = TavernAiCard.Load("character.png");
+// TavernAiCard card = TavernAiCard.Load("character.png");
 
 // Example: Print the name of the loaded character.
 Console.WriteLine(card.Name);
