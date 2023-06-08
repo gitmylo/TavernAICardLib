@@ -1,5 +1,7 @@
 # TavernAI card lib .net
 
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/gitmylo/TavernAICardLib/dotnet-desktop.yml?style=for-the-badge)
+
 <!-- TOC -->
 * [TavernAI card lib .net](#tavernai-card-lib-net)
 * [Description](#description)
