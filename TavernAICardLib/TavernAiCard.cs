@@ -12,7 +12,12 @@ namespace TavernAICardLib;
 public class TavernAiCard
 {
     public Image? Image;
-    
+    public string? ImagePath;
+
+    public static bool ImageFullySupported()
+    {
+        return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+    }
     
     // Card Fields:
     [JsonInclude] [JsonPropertyName("alternate_greetings")] public List<string>? AlternateGreetings { get; set; }
@@ -31,8 +36,9 @@ public class TavernAiCard
     [JsonInclude] [JsonPropertyName("system_prompt")] public string? SystemPrompt { get; set; }
     [JsonInclude] [JsonPropertyName("tags")] public List<string>? Tags { get; set; }
 
-    public TavernAiCard(Image? image)
+    public TavernAiCard(string? imagePath, Image? image)
     {
+        this.ImagePath = imagePath;
         this.Image = image;
     }
 
@@ -51,25 +57,22 @@ public class TavernAiCard
         {JsonFileTypes, new JsonCardSaver()}
     };
 
-    public static TavernAiCard? Load(string filePath)
+    public static TavernAiCard Load(string filePath)
     {
-        foreach (var key in _cardLoaders.Keys)
-            foreach (var end in key)
-                if (filePath.ToLower().EndsWith(end))
-                    return _cardLoaders[key].Load(filePath);
+        foreach (var key in _cardLoaders.Keys) foreach (var end in key) if (filePath.ToLower().EndsWith(end)) return _cardLoaders[key].Load(filePath);
 
-        return null;
+        throw new UnsupportedFileFormatException(filePath);
     }
 
     public void Save(string filePath)
     {
-        foreach (var key in _cardSavers.Keys)
-            foreach (var end in key)
-                if (filePath.ToLower().EndsWith(end))
-                {
-                    _cardSavers[key].Save(filePath, this);
-                    return;
-                }
+        foreach (var key in _cardSavers.Keys) foreach (var end in key) if (filePath.ToLower().EndsWith(end))
+        {
+            _cardSavers[key].Save(filePath, this);
+            return;
+        }
+
+        throw new UnsupportedFileFormatException(filePath);
     }
 }
 
@@ -80,7 +83,7 @@ public class Extensions
 
 public abstract class CardLoader
 {
-    public abstract TavernAiCard? Load(string filePath);
+    public abstract TavernAiCard Load(string filePath);
 }
 
 public abstract class CardSaver
@@ -99,8 +102,11 @@ public class ImageCardLoader : CardLoader
         reader.End();
         
         Image? image = null;
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        string? imagePath = null;
+        if (TavernAiCard.ImageFullySupported())
             image = new Bitmap(filePath);
+        else
+            imagePath = filePath;
 
         string jsonData = Encoding.ASCII.GetString(Convert.FromBase64String(data));
         TavernAiCard? card = JsonSerializer.Deserialize<TavernAiCard>(jsonData, new JsonSerializerOptions()
@@ -110,6 +116,7 @@ public class ImageCardLoader : CardLoader
         if (card != null)
         {
             card.Image = image;
+            card.ImagePath = imagePath;
             return card;
         }
 
@@ -119,7 +126,7 @@ public class ImageCardLoader : CardLoader
 
 public class JsonCardLoader : CardLoader
 {
-    public override TavernAiCard? Load(string filePath)
+    public override TavernAiCard Load(string filePath)
     {
         string jsonData = File.ReadAllText(filePath);
         TavernAiCard? card = JsonSerializer.Deserialize<TavernAiCard>(jsonData, new JsonSerializerOptions()
@@ -156,10 +163,13 @@ public class ImageCardSaver : CardSaver
     public override void Save(string filePath, TavernAiCard card)
     {
         if (card.Image == null) throw new NoImageException(filePath);
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            throw new OsFileSaveException(filePath);
-        card.Image.Save(filePath);
-        
+        if (card.Image != null)
+            card.Image.Save(filePath);
+        else if (card.ImagePath == null)
+            throw new NoImageSaveException(filePath);
+        else if (card.ImagePath != filePath)
+            File.Copy(card.ImagePath, filePath);
+
         // https://stackoverflow.com/a/32175522/
         String tmpFile = "tmp.png";
         PngReader reader = FileHelper.CreatePngReader(filePath);
@@ -213,11 +223,21 @@ public class NoMetaDataException : Exception
     public override string Message { get; }
 }
 
-public class OsFileSaveException : Exception
+public class NoImageSaveException : Exception
 {
-    public OsFileSaveException(string fileName)
+    public NoImageSaveException(string fileName)
     {
-        Message = $"Failed to save {fileName}, Saving to image formats is only supported on Windows.";
+        Message = $"Failed to save {fileName}, No image or imagepath.";
+    }
+
+    public override string Message { get; }
+}
+
+public class UnsupportedFileFormatException : Exception
+{
+    public UnsupportedFileFormatException(string fileName)
+    {
+        Message = $"Unsupported file format used for {fileName}. Not a supported image or JSON format.";
     }
 
     public override string Message { get; }
