@@ -6,5 +6,5 @@ if (card != null)
 {
     Console.WriteLine(card.Name);
     card.Name = "Waltuh White";
-    
+    card.Save("Waltuh White.json");
 }
