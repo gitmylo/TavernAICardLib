@@ -13,19 +13,21 @@ public class TavernAiCard
     
     
     // Card Fields:
-    [JsonPropertyName("alternate_greetings")] public string[] alternateGreetings { get; set; }
-    [JsonPropertyName("avatar")] public string avatar { get; set; }
-    [JsonPropertyName("character_version")] public string characterVersion { get; set; }
-    [JsonPropertyName("creator")] public string creator { get; set; }
-    [JsonPropertyName("creator_notes")] public string creatorNotes { get; set; }
-    [JsonPropertyName("description")] public string description { get; set; }
-    [JsonPropertyName("mes_example")] public string messageExample { get; set; }
-    [JsonPropertyName("name")] public string name { get; set; }
-    [JsonPropertyName("personality")] public string personality { get; set; }
-    [JsonPropertyName("post_history_instructions")] public string postHistoryInstructions { get; set; }
-    [JsonPropertyName("scenario")] public string scenario { get; set; }
-    [JsonPropertyName("system_prompt")] public string systemPrompt { get; set; }
-    [JsonPropertyName("tags")] public string[] tags { get; set; }
+    [JsonInclude] [JsonPropertyName("alternate_greetings")] public List<string>? AlternateGreetings { get; set; }
+    [JsonInclude] [JsonPropertyName("avatar")] public string? Avatar { get; set; }
+    [JsonInclude] [JsonPropertyName("character_version")] public string? CharacterVersion { get; set; }
+    [JsonInclude] [JsonPropertyName("creator")] public string? Creator { get; set; }
+    [JsonInclude] [JsonPropertyName("creator_notes")] public string? CreatorNotes { get; set; }
+    [JsonInclude] [JsonPropertyName("description")] public string? Description { get; set; }
+    [JsonInclude] [JsonPropertyName("extensions")] public Extensions? Extensions { get; set; }
+    [JsonInclude] [JsonPropertyName("first_mes")] public string? FirstMessage { get; set; }
+    [JsonInclude] [JsonPropertyName("mes_example")] public string? MessageExample { get; set; }
+    [JsonInclude] [JsonPropertyName("name")] public string? Name { get; set; }
+    [JsonInclude] [JsonPropertyName("personality")] public string? Personality { get; set; }
+    [JsonInclude] [JsonPropertyName("post_history_instructions")] public string? PostHistoryInstructions { get; set; }
+    [JsonInclude] [JsonPropertyName("scenario")] public string? Scenario { get; set; }
+    [JsonInclude] [JsonPropertyName("system_prompt")] public string? SystemPrompt { get; set; }
+    [JsonInclude] [JsonPropertyName("tags")] public List<string>? Tags { get; set; }
 
     public TavernAiCard(Image image)
     {
@@ -48,6 +50,11 @@ public class TavernAiCard
     }
 }
 
+public class Extensions
+{
+    // Not implemented
+}
+
 public abstract class CardLoader
 {
     public abstract TavernAiCard Load(string filePath);
@@ -67,7 +74,10 @@ public class ImageCardLoader : CardLoader
                 if (splitDesc != null && splitDesc[0] == "chara")
                 {
                     string jsonData = Encoding.ASCII.GetString(Convert.FromBase64String(splitDesc[1]));
-                    TavernAiCard? card = JsonSerializer.Deserialize<TavernAiCard>(jsonData);
+                    TavernAiCard? card = JsonSerializer.Deserialize<TavernAiCard>(jsonData, new JsonSerializerOptions()
+                    {
+                        IncludeFields = true
+                    });
                     if (card != null)
                     {
                         card.image = image;
