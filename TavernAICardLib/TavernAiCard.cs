@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Diagnostics;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
@@ -36,10 +37,10 @@ public class TavernAiCard
     [JsonInclude] [JsonPropertyName("system_prompt")] public string? SystemPrompt { get; set; }
     [JsonInclude] [JsonPropertyName("tags")] public List<string>? Tags { get; set; }
 
-    public TavernAiCard(string? imagePath, Image? image)
+    public TavernAiCard(string? imagePath, Image? image, bool dontLoadImage = false)
     {
         this.ImagePath = imagePath;
-        if (image == null && imagePath != null && ImageFullySupported())
+        if (!dontLoadImage && image == null && imagePath != null && ImageFullySupported())
         {
             this.Image = new Bitmap(imagePath);
         }
@@ -47,10 +48,10 @@ public class TavernAiCard
     }
 
     public TavernAiCard() {}
-    public TavernAiCard(string? imagePath) : this(imagePath, null) {}
+    public TavernAiCard(string? imagePath, bool dontLoadImage = false) : this(imagePath, null, dontLoadImage) {}
     public TavernAiCard(Image? image) : this(null, image) {}
 
-    public static string[] ImageFileTypes = {".png", ".webp", ".jpg", ".jpeg"};
+    public static string[] ImageFileTypes = {".png", ".apng", ".webp", ".jpg", ".jpeg", ".gif", ".bmp"};
     public static string[] JsonFileTypes = {".json"};
     
     private static Dictionary<string[], CardLoader> _cardLoaders = new()
@@ -170,16 +171,37 @@ public class ImageCardSaver : CardSaver
 {
     public override void Save(string filePath, TavernAiCard card)
     {
-        if (card.Image == null) throw new NoImageException(filePath);
+        if (File.Exists(filePath)) File.Delete(filePath);
         if (card.Image != null)
+        {
+            filePath = Path.GetFileNameWithoutExtension(filePath) + ".png";
             card.Image.Save(filePath);
+        }
         else if (card.ImagePath == null)
             throw new NoImageSaveException(filePath);
-        else if (card.ImagePath != filePath)
-            File.Copy(card.ImagePath, filePath);
 
+        if (card.Image == null)
+        {
+            if (Path.GetExtension(filePath).ToLower() != "png")
+            {
+                Console.WriteLine("Converting to png");
+                Process? p = Process.Start(new ProcessStartInfo()
+                {
+                    FileName = "ffmpeg",
+                    Arguments = $"-y -i \"{card.ImagePath}\" \"{filePath}\""
+                });
+                p?.WaitForExit();
+            }
+            else
+            {
+                File.Copy(card.ImagePath, filePath);
+            }
+        }
+        
+        
         // https://stackoverflow.com/a/32175522/
         String tmpFile = "tmp.png";
+        if (File.Exists(tmpFile)) File.Delete(tmpFile);
         PngReader reader = FileHelper.CreatePngReader(filePath);
         PngWriter writer = FileHelper.CreatePngWriter(tmpFile, reader.ImgInfo, true);
         int chunkBehav = ChunkCopyBehaviour.COPY_ALL_SAFE;
