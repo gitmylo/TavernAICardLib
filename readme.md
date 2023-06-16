@@ -6,7 +6,7 @@
 * [TavernAI card lib .net](#tavernai-card-lib-net)
 * [Description](#description)
 * [Examples](#examples)
-* [Importing](#importing)
+  * [Importing](#importing)
   * [Loading](#loading)
   * [Saving](#saving)
   * [Data reading and writing](#data-reading-and-writing)
@@ -22,7 +22,7 @@ It supports `.json`, `.png`, `.webp`, `.jpg` and `.jpeg` files. Although some of
 
 # Examples
 
-# Importing
+## Importing
 ```csharp
 using TavernAICardLib;
 ```
